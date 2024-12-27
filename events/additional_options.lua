@@ -49,7 +49,28 @@ function difficulty_settings_gui ()
   wdw:setCancel( luatk.close )
   luatk.newText( wdw, 0, 10, w, 20, _("Additional Options"), nil, "center" )
 
-  local y = 55+120+20
+  local y = 55
+
+  local poi_npc_var_key = "poi_generator_npc_priority"
+
+  local function poi_npc_prio_to_bool()
+    local alert_poi_npc_prio = var.peek(poi_npc_var_key)
+    return (alert_poi_npc_prio ~= nil) and (alert_poi_npc_prio <= 5)
+  end
+
+  local alert_poi_npc_checkbox
+
+  local function update_on_poi_checkbox_change ()
+    if alert_poi_npc_checkbox:get() then
+      var.push(poi_npc_var_key, 5)
+    else
+      var.pop(poi_npc_var_key)
+    end
+  end
+
+  alert_poi_npc_checkbox = luatk.newCheckbox( wdw, 20, y, w-40, 20, _("Alert when POI mission giver available"), update_on_poi_checkbox_change, poi_npc_prio_to_bool() )
+
+  y = y + 40
 
   local wealth_maintenance_rate_text_box = luatk.newText( wdw, 20, y, w, 20, _("Wealth maintenance rate per period (%):") )
   local txtw = math.max( wealth_maintenance_rate_text_box:width() )
